@@ -1,0 +1,1 @@
+qiime feature-table filter-samples --i-table ./4.QualityControl/table.qza --m-metadata-file ./0.MetaInfo/sample_metadata.tsv --o-filtered-table ./4.QualityControl/filtered-table.qza
