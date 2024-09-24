@@ -11,7 +11,7 @@ workflow {
 
 process FastQC {
     input:
-    stdin
+    path(reads)
 
     output:
     stdout
