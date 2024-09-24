@@ -13,7 +13,7 @@ workflow {
 
     // Qiime2
     all_files_ch = Channel.fromPath(params.reads, checkIfExists: true)
-    Writing_fastqManifest
+    Writing_fastqManifest(all_files_ch)
 
 
 }
