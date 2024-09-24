@@ -1,14 +1,16 @@
 params.dir = "/scratch/sb14489/10.Metagenome/"
-params.reads = "/scratch/sb14489/10.Metagenome/1.RawData/Leaf0.5_Re1_{1,2}.fastq.gz"
+params.reads = "/scratch/sb14489/10.Metagenome/1.RawData/*_{1,2}.fastq.gz"
 params.threads = 4
 
 workflow {
-    read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
-    FastQC(read_pairs_ch) 
-    trimmed_reads_ch = Trimmomatic(read_pairs_ch) 
-    MergeReads(trimmed_reads_ch)
+    // Channel to capture paired-end files
+    read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
 
-    }
+    // Connect the processes
+    FastQC(read_pairs_ch)
+    trimmed_reads_ch = Trimmomatic(read_pairs_ch)
+    MergeReads(trimmed_reads_ch)
+}
 
 process FastQC {
     tag "$pair_id"
@@ -25,6 +27,7 @@ process FastQC {
     fastqc --threads $params.threads ${reads[1]} -o $params.dir/1.RawData/
     """
 }
+
 process Trimmomatic {
     tag "$pair_id"
 
@@ -41,11 +44,10 @@ process Trimmomatic {
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
-        $params.dir/1.RawData/${reads[0]} $params.dir/1.RawData/${reads[1]} \\
+        ${reads[0]} ${reads[1]} \\
         ${pair_id}_1_trimmed_paired.fq.gz ${pair_id}_1_trimmed_unpaired.fq.gz \\
         ${pair_id}_2_trimmed_paired.fq.gz ${pair_id}_2_trimmed_unpaired.fq.gz \\
         LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-
     """
 }
 
@@ -62,8 +64,4 @@ process MergeReads {
     pear -f $trimmed1 -r $trimmed2 -j $params.threads \\
         -o $params.dir/3.Pear/${pair_id} > $params.dir/3.Pear/${pair_id}.log
     """
-}
-
-process PreparingManifest{
-    input:
 }
