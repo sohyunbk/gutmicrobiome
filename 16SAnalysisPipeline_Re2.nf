@@ -15,7 +15,7 @@ workflow {
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
     manifestfile = Writing_fastqManifest(all_files_ch)
     tableQZA = Making_MultiflexedQZAFile(manifestfile)
-
+    OTU_ASV_QZAFile(tableQZA)
 }
 
 process FastQC {
@@ -103,6 +103,7 @@ process Writing_fastqManifest {
     """
 }
 
+
 process Making_MultiflexedQZAFile{
     input:
     path "${params.commName}_manifest_33.txt"
@@ -123,19 +124,22 @@ process Making_MultiflexedQZAFile{
 
 process OTU_ASV_QZAFile{
     input:
-    path "${params.commName}_manifest_33.txt"
+    path "${params.commName}_demultiplexed.qza"
 
     output:
     path "${params.commName}_table.qza"
+    path "${params.commName}_rep_seqs.qza"
+    path "${params.commName}_stats-dada2.qza"
+    publishDir "$params.dir/4.Importing/", mode: 'copy'
 
     script:
     """
     qiime dada2 denoise-single --p-n-threads 28 \\
-     --i-demultiplexed-seqs ${params.dir}/4.Importing/${params.commName}_demultiplexed.qza  \\
+     --i-demultiplexed-seqs "${params.commName}_demultiplexed.qza"  \\
      --p-trunc-len 0  --p-trim-left 0 --o-representative-sequences \\
-     ${params.dir}/4.Importing/${params.commName}_rep_seqs.qza --o-table \\
-     ${params.dir}/4.Importing/${params.commName}_table.qza  \\
-     --o-denoising-stats ${params.dir}/4.Importing/${params.commName}_stats-dada2.qza
+      ${params.commName}_rep_seqs.qza --o-table \\
+       ${params.commName}_table.qza  \\
+     --o-denoising-stats ${params.commName}_stats-dada2.qza
     """
 
 }
