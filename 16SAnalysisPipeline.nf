@@ -21,13 +21,13 @@ process FastQC {
 process Trimmomatic {
 	input:
     stdin
-	
+
     output:
     stdout
 
 	script:
-	def re1Name = $params.reads1.replace(".fastq.gz","")
-	def re2Name = $params.reads2.replace(".fastq.gz","")
+	def re1Name = params.reads1.replace(".fastq.gz", "")
+	def re2Name = params.reads2.replace(".fastq.gz","")
 	"""
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
