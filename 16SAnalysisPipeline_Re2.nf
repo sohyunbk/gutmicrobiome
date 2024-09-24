@@ -1,5 +1,5 @@
 params.dir = "/scratch/sb14489/10.Metagenome/"
-
+params.metadata = "/scratch/sb14489/10.Metagenome/1.RawData/Metadata.txt"
 params.threads = 4
 params.commName = "ChickenGut"
 params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
@@ -139,7 +139,7 @@ process Denoising_ChimeraRemov_ASV_dada2_QZAFile{
     script:
     """
     mkdir -p ${params.dir}/5.AfterQC/
-    qiime dada2 denoise-single --p-n-threads 28 \\
+    qiime dada2 denoise-single --p-n-threads ${params.threads} \\
      --i-demultiplexed-seqs "${params.commName}_demultiplexed.qza"  \\
      --p-trunc-len 0  --p-trim-left 0 --o-representative-sequences \\
       ${params.commName}_rep_seqs.qza --o-table \\
@@ -156,7 +156,6 @@ process FeatureTable{
 
     output:
     path "${params.commName}_table.qzv"
-    path "${params.commName}_metadata.tsv"
     path "${params.commName}_rep_seqs.qzv"
     publishDir "$params.dir/5.AfterQC/", mode: 'copy'
 
@@ -164,7 +163,7 @@ process FeatureTable{
     """
     qiime feature-table summarize --i-table  "${params.commName}_table.qza" \\
      --o-visualization "${params.commName}_table.qzv" \\
-      --m-sample-metadata-file "${params.commName}_metadata.tsv"
+      --m-sample-metadata-file $params.metadata 
 
     qiime feature-table tabulate-seqs --i-data "${params.commName}_rep_seqs.qza" \\ 
     --o-visualization "${params.commName}_rep_seqs.qzv"
