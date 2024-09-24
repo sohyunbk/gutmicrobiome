@@ -87,11 +87,6 @@ process Writing_fastqManifest{
     import os
     import glob
     outfile = open("manifest_33.txt","w")
-    outfile.write("# single-end PHRED 33 fastq manifest file for forward reads\n")
-    outfile.write("sample-id,absolute-filepath,direction\n")
-    for sFiles in glob.glob("$assembled_files"):
-        FileName = os.path.split(sFiles)[1].replace(".assembled.fastq","")
-        outfile.write(FileName+","+sFiles+",forward\n")
-    outfile.close()
     """
 }
+
