@@ -2,13 +2,12 @@ params.dir = "/scratch/sb14489/10.Metagenome/"
 params.reads1 = "Leaf0.5_Re1_1.fastq.gz"
 params.reads2 = "Leaf0.5_Re1_2.fastq.gz"
 params.threads = 4
-params.skipFastQC = False  
 
 workflow {
     Channel
         .fromFilePairs([params.dir + "/1.RawData/" + params.reads1, params.dir + "/1.RawData/" + params.reads2])
         .set { raw_reads }
-		
+
     raw_reads | FastQC | Trimmomatic | MergeReads | view
     }
 
