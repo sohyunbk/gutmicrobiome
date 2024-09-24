@@ -4,7 +4,7 @@ params.reads2 = "Leaf0.5_Re1_2.fastq.gz"
 params.threads = 4
 
 workflow {
-    Trimmomatic | view
+    FastQC | Trimmomatic | MergeReads | view
 }
 
 process FastQC {
