@@ -40,7 +40,7 @@ process Trimmomatic {
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
-        $reads1 $reads2 \\
+        $params.dir/1.RawData/$params.reads1 $params.dir/1.RawData/$params.reads2 \\
         $params.dir/2.Trimmomatic/${re1Name}_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${re1Name}_trimmed_unpaired.fq.gz \\
         $params.dir/2.Trimmomatic/${re2Name}_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${re2Name}_trimmed_unpaired.fq.gz \\
           LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
