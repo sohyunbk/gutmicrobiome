@@ -86,9 +86,8 @@ process Writing_fastqManifest{
     echo "# single-end PHRED 33 fastq manifest file for forward reads" > "manifest_33.txt" 
     echo "sample-id,absolute-filepath,direction" >> "manifest_33.txt" 
     for sFile in $assembled_files; do
-        # Extract the file name without the directory and remove the ".assembled.fastq" suffix
-        FileName=$(basename "$sFile" .assembled.fastq)
-        # Write the sample-id, absolute file path, and direction to the manifest file
+        FileName=$(basename "$sFile")
+        FileName="${FileName%.assembled.fastq}"
         echo "$FileName,$sFile,forward" >> "manifest_33.txt" 
     done
     """
