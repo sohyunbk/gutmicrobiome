@@ -37,6 +37,7 @@ process Trimmomatic {
 
     script:
     """
+    echo ${reads[0]}
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
