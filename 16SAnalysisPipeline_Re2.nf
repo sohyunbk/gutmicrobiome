@@ -12,7 +12,7 @@ workflow {
     MergeReads(trimmed_reads_ch)
 
     // Qiime2
-    all_files_ch = Channel.fromPath(params.reads, checkIfExists: true)
+    all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true)
     Writing_fastqManifest(all_files_ch)
 
 
