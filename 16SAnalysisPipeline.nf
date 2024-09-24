@@ -8,13 +8,9 @@ workflow {
     Channel
         .fromFilePairs([params.dir + "/1.RawData/" + params.reads1, params.dir + "/1.RawData/" + params.reads2])
         .set { raw_reads }
-
-    if (!params.skipFastQC) {
-        raw_reads | FastQC | Trimmomatic | MergeReads | view
-    } else {
-        raw_reads | Trimmomatic | MergeReads | view
+		
+    raw_reads | FastQC | Trimmomatic | MergeReads | view
     }
-}
 
 process FastQC {
     input:
