@@ -11,7 +11,8 @@ workflow {
 
 process FastQC {
     input:
-    path(reads)
+    tuple val(pair_id), path(reads)
+
 
     output:
     stdout
