@@ -14,7 +14,7 @@ workflow {
     // Qiime2
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
     manifestfile = Writing_fastqManifest(all_files_ch)
-    //tableQZA = Making_MultiflexedQZAFile(manifestfile)
+    tableQZA = Making_MultiflexedQZAFile(manifestfile)
 
 }
 
@@ -89,14 +89,11 @@ process Writing_fastqManifest {
         echo "\${sFile}"
     done
     
-    # Create the output directory
     mkdir -p ${params.dir}/4.Importing/
     
-    # Write the header to the manifest file
     echo "# single-end PHRED 33 fastq manifest file for forward reads" > manifest_33.txt
     echo "sample-id,absolute-filepath,direction" >> manifest_33.txt
     
-    # Loop through each file in assembled_files and write to the manifest
     for sFile in ${assembled_files}; do
         # Extract the base name and strip the '.assembled.fastq' extension
         FileName=\$(basename "\${sFile}" | sed 's/_.*.assembled.fastq//')
