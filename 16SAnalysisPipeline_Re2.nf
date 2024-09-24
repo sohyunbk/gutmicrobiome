@@ -4,15 +4,21 @@ params.threads = 10
 params.commName = "ChickenGut"
 params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
 params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
+params.qc=true
+params.featuretable=false
+
+parm 
 
 workflow {
-     // Upto Merging Reads
-    read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
-    FastQC(read_pairs_ch)
-    trimmed_reads_ch = Trimmomatic(read_pairs_ch)
-    MergeReads(trimmed_reads_ch)
 
-    // Qiime2
+    if (params.qc) {
+        read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
+        FastQC(read_pairs_ch)
+        trimmed_reads_ch = Trimmomatic(read_pairs_ch)
+        MergeReads(trimmed_reads_ch)
+    }
+
+    if (params.featuretable){
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
     manifestfile = Writing_fastqManifest(all_files_ch)
     demultiplexed_QZA = Making_MultiflexedQZAFile(manifestfile)
@@ -20,6 +26,7 @@ workflow {
     tableQZA = outputQZAs[0]
     repseqQZA = outputQZAs[1]
     FeatureTable(tableQZA,repseqQZA)
+    }
 }
 
 process FastQC {
@@ -86,8 +93,6 @@ process Writing_fastqManifest {
 
     script:
     """
-    # Print each file in the assembled_files
-    echo "Files in assembled_files:"
     for sFile in ${assembled_files}; do
         echo "\${sFile}"
     done
@@ -167,5 +172,12 @@ process FeatureTable{
 
     qiime feature-table tabulate-seqs --i-data "${params.commName}_rep_seqs.qza" \\ 
     --o-visualization "${params.commName}_rep_seqs.qzv"
+
+    ##ignore missing samples
+    qiime feature-table filter-samples --i-table ./4.QualityControl/table.qza  \\
+    --m-metadata-file ./0.MetaInfo/sample_metadata.tsv \\
+    --o-filtered-table ./4.QualityControl/filtered-table.qza
     """
 }
+
+process 
