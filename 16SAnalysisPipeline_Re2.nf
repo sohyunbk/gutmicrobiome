@@ -94,10 +94,10 @@ process Writing_fastqManifest {
     echo "# single-end PHRED 33 fastq manifest file for forward reads" > manifest_33.txt
     echo "sample-id,absolute-filepath,direction" >> manifest_33.txt
     
+    # Loop through each file in assembled_files and write to the manifest
     for sFile in ${assembled_files}; do
         # Extract the base name and strip the '.assembled.fastq' extension
-        FileName=\$(basename "\${sFile}" | sed 's/_.*.assembled.fastq//')
-        
+        FileName=$(basename "${sFile}" | sed 's/\.assembled\.fastq//')        
         # Write to the manifest file
         echo "\${FileName},\$(realpath \${sFile}),forward" >> manifest_33.txt
     done
