@@ -57,7 +57,6 @@ process MergeReads {
     stdout
 
     script:
-    def samplename = params.reads1.replace("_1.fastq.gz", "")
     """
     mkdir -p $params.dir/3.Pear/
     pear -f $trimmed1 -r $trimmed2 -j $params.threads \\
