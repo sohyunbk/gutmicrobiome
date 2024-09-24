@@ -49,6 +49,8 @@ process MergeReads {
 
 	script:
 	def samplename = params.reads1.replace("_1.fastq.gz", "")
+	def re1Name = params.reads1.replace(".fastq.gz", "")
+	def re2Name = params.reads2.replace(".fastq.gz","") 
 	"""
 	mkdir -p $params.dir/3.Pear/
 	pear -f $params.dir/2.Trimmomatic/${re1Name}_trimmed_paired.fq.gz \\
