@@ -14,7 +14,7 @@ workflow {
     // Qiime2
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
     manifestfile = Writing_fastqManifest(all_files_ch)
-    tableQZA = OTU_ASV_QZAFile(manifestfile)
+    tableQZA = Making_MultiflexedQZAFile(manifestfile)
 
 }
 
@@ -97,6 +97,24 @@ process Writing_fastqManifest {
         echo "\$FileName,\$sFile,forward" >> "${params.commName}_manifest_33.txt"
     done
     """
+}
+
+process Making_MultiflexedQZAFile{
+    input:
+    path "${params.commName}_manifest_33.txt"
+
+    output:
+    path "${params.commName}_demultiplexed.qza"
+    publishDir "$params.dir/4.Importing/", mode: 'copy'
+
+    script:
+    """
+    qiime tools import --type 'SampleData[SequencesWithQuality]' \
+    --input-path "${params.commName}_manifest_33.txt" \
+     --output-path "${params.commName}_demultiplexed.qza" \
+      --input-format SingleEndFastqManifestPhred33
+    """
+
 }
 
 process OTU_ASV_QZAFile{
