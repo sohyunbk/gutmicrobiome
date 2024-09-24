@@ -177,5 +177,3 @@ process FeatureTable{
     --o-filtered-table ./4.QualityControl/filtered-table.qza
     """
 }
-
-process 
