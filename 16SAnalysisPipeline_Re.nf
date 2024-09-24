@@ -32,7 +32,9 @@ process Trimmomatic {
     tuple val(pair_id), path(reads)
 
     output:
-    tuple val(pair_id), path("$params.dir/2.Trimmomatic/${pair_id}_1_trimmed_paired.fq.gz"), path("$params.dir/2.Trimmomatic/${pair_id}_2_trimmed_paired.fq.gz")
+    tuple val(pair_id), path("${pair_id}_1_trimmed_paired.fq.gz"), path("${pair_id}_2_trimmed_paired.fq.gz")
+
+    publishDir "$params.dir/2.Trimmomatic/", mode: 'copy'  // Move the outputs to the desired directory
 
     script:
     """
@@ -40,9 +42,10 @@ process Trimmomatic {
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
         $params.dir/1.RawData/${reads[0]} $params.dir/1.RawData/${reads[1]} \\
-        $params.dir/2.Trimmomatic/${pair_id}_1_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${pair_id}_1_trimmed_unpaired.fq.gz \\
-        $params.dir/2.Trimmomatic/${pair_id}_2_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${pair_id}_2_trimmed_unpaired.fq.gz \\
+        ${pair_id}_1_trimmed_paired.fq.gz ${pair_id}_1_trimmed_unpaired.fq.gz \\
+        ${pair_id}_2_trimmed_paired.fq.gz ${pair_id}_2_trimmed_unpaired.fq.gz \\
         LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+
     """
 }
 
