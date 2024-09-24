@@ -8,7 +8,7 @@ workflow {
         .fromFilePairs([params.dir + "/1.RawData/" + params.reads1, params.dir + "/1.RawData/" + params.reads2])
         .set { raw_reads }
 
-    raw_reads | FastQC | Trimmomatic | MergeReads | view
+    raw_reads | FastQC | view
     }
 
 process FastQC {
@@ -19,6 +19,7 @@ process FastQC {
     tuple val(reads1), val(reads2)
 
     script:
+	echo $reads1
     """
     fastqc --threads $params.threads $reads1 -o $params.dir/1.RawData/
     fastqc --threads $params.threads $reads2 -o $params.dir/1.RawData/
