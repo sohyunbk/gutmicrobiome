@@ -1,11 +1,10 @@
 params.dir = "/scratch/sb14489/10.Metagenome/"
-params.reads1 = "Leaf0.5_Re1_1.fastq.gz"
-params.reads2 = "Leaf0.5_Re1_2.fastq.gz"
+params.samplename = "Leaf0.5_Re1"
 params.threads = 4
 
 workflow {
     Channel
-        .fromFilePairs([params.dir + "/1.RawData/" + params.reads1, params.dir + "/1.RawData/" + params.reads2])
+        .fromFilePairs([params.dir + "/1.RawData/" + params.samplename +"_1.fastq.gz", params.dir + "/1.RawData/" + params.samplename +"_2.fastq.gz"])
         .set { raw_reads }
 
     raw_reads | FastQC | Trimmomatic | view
@@ -33,16 +32,14 @@ process Trimmomatic {
     tuple val(reads1), val(reads2)
 
     script:
-    def re1Name = params.reads1.replace(".fastq.gz", "")
-    def re2Name = params.reads2.replace(".fastq.gz", "")
     """
 	echo "The value of reads1 is: $reads1"
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
         $params.dir/1.RawData/$params.reads1 $params.dir/1.RawData/$params.reads2 \\
-        $params.dir/2.Trimmomatic/${re1Name}_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${re1Name}_trimmed_unpaired.fq.gz \\
-        $params.dir/2.Trimmomatic/${re2Name}_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${re2Name}_trimmed_unpaired.fq.gz \\
+        $params.dir/2.Trimmomatic/${params.samplename}_1_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${params.samplename}_1_trimmed_unpaired.fq.gz \\
+        $params.dir/2.Trimmomatic/${params.samplename}_2_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${params.samplename}_2_trimmed_unpaired.fq.gz \\
           LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     """
 }
