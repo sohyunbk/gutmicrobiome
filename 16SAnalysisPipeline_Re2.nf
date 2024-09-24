@@ -6,10 +6,10 @@ params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
 params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
 workflow {
      // Upto Merging Reads
-    read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
-    FastQC(read_pairs_ch)
-    trimmed_reads_ch = Trimmomatic(read_pairs_ch)
-    MergeReads(trimmed_reads_ch)
+    //read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
+    //FastQC(read_pairs_ch)
+    //trimmed_reads_ch = Trimmomatic(read_pairs_ch)
+    //MergeReads(trimmed_reads_ch)
 
     // Qiime2
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true)
