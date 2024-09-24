@@ -1,7 +1,7 @@
 params.dir = "/scratch/sb14489/10.Metagenome/"
 
 params.threads = 4
-
+params.commName = "ChickenGut"
 params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
 params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
 workflow {
@@ -77,32 +77,43 @@ process Writing_fastqManifest {
     path assembled_files
 
     output:
-    path "manifest_33.txt"
+    path "$params.commName"_manifest_33.txt
     publishDir "$params.dir/4.Importing/", mode: 'copy'
 
     script:
     """
-    # Print each file in the assembled_files
-    echo "Files in assembled_files:"
-    for sFile in ${assembled_files}; do
-        echo "\$sFile"
-    done
-    
-    # Create the output directory
     mkdir -p $params.dir/4.Importing/
     
     # Write the header to the manifest file
-    echo "# single-end PHRED 33 fastq manifest file for forward reads" > "manifest_33.txt"
-    echo "sample-id,absolute-filepath,direction" >> "manifest_33.txt"
+    echo "# single-end PHRED 33 fastq manifest file for forward reads" > "$params.commName"_manifest_33.txt
+    echo "sample-id,absolute-filepath,direction" >> "$params.commName"_manifest_33.txt
     
-    # Loop through each file in assembled_files and write to the manifest
     for sFile in ${assembled_files}; do
         # Extract the base name and strip the '.assembled.fastq' extension
         FileName=\$(basename "\$sFile")
         FileName="\${FileName%%_*}"
 
         # Write to the manifest file
-        echo "\$FileName,\$sFile,forward" >> "manifest_33.txt"
+        echo "\$FileName,\$sFile,forward" >> "$params.commName"_manifest_33.txt
     done
     """
+}
+
+process OTU_ASV_QZAFile{
+    input:
+    path "$params.commName"_manifest_33.txt
+
+    output:
+    path "$params.commName"_table.qza
+
+    script:
+    """
+    qiime dada2 denoise-single --p-n-threads 28 \\
+     --i-demultiplexed-seqs $params.dir/4.Importing/"$params.commName"_demultiplexed.qza  \\
+     --p-trunc-len 0  --p-trim-left 0 --o-representative-sequences \\
+     $params.dir/4.Importing/"$params.commName"_rep_seqs.qza --o-table \\
+     $params.dir/4.Importing/"$params.commName"_table.qza  \\
+     --o-denoising-stats $params.dir/4.Importing/"$params.commName"_stats-dada2.qza
+    """
+
 }
