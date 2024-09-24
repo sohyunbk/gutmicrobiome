@@ -67,7 +67,6 @@ process MergeReads {
     script:
     """
     mkdir -p $params.dir/3.Pear/
-    mkdir -p $params.dir/4.Importing/
     pear -f $trimmed1 -r $trimmed2 -j $params.threads \\
         -o $params.dir/3.Pear/${pair_id} > $params.dir/3.Pear/${pair_id}.log
     """
@@ -83,6 +82,8 @@ process Writing_fastqManifest{
     
     script:
     """
+    echo $assembled_files
+    mkdir -p $params.dir/4.Importing/
     echo "# single-end PHRED 33 fastq manifest file for forward reads" > "manifest_33.txt"
     echo "sample-id,absolute-filepath,direction" >> "manifest_33.txt"
     
