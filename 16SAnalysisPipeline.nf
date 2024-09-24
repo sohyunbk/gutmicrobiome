@@ -1,5 +1,5 @@
-params.reads1 = "/scratch/sb14489/10.Metagenome/1.RawData/Leaf0.5_Re1_1.fq"
-params.reads2 = "/scratch/sb14489/10.Metagenome/1.RawData/Leaf0.5_Re1_2.fq"
+params.reads1 = "/scratch/sb14489/10.Metagenome/1.RawData/Leaf0.5_Re1_1.fastq.gz"
+params.reads2 = "/scratch/sb14489/10.Metagenome/1.RawData/Leaf0.5_Re1_2.fastq.gz"
 
 workflow {
     FastQC | view
@@ -15,6 +15,7 @@ process FastQC {
 
     """
 	echo fastqc $params.reads1 -o $output_dir1
+	echo fastqc $params.reads2 -o $output_dir2
     fastqc $params.reads1 -o $output_dir1
     fastqc $params.reads2 -o $output_dir2
     """
