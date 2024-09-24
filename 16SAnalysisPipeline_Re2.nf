@@ -1,18 +1,19 @@
 params.dir = "/scratch/sb14489/10.Metagenome/"
-params.reads = "/scratch/sb14489/10.Metagenome/1.RawData/*_{1,2}.fastq.gz"
+
 params.threads = 4
-params.qiime = "ON"
+
+params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
+params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
 workflow {
      // Upto Merging Reads
-    if [ $params.qiime != "ON" ]; then
-        read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
-        FastQC(read_pairs_ch)
-        trimmed_reads_ch = Trimmomatic(read_pairs_ch)
-        MergeReads(trimmed_reads_ch)
+    read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
+    FastQC(read_pairs_ch)
+    trimmed_reads_ch = Trimmomatic(read_pairs_ch)
+    MergeReads(trimmed_reads_ch)
 
     // Qiime2
-    else
-        Writing_fastqManifest
+    all_files_ch = Channel.fromPath(params.reads, checkIfExists: true)
+    Writing_fastqManifest
 
 
 }
@@ -66,16 +67,28 @@ process MergeReads {
     script:
     """
     mkdir -p $params.dir/3.Pear/
+    mkdir -p $params.dir/4.Importing/
     pear -f $trimmed1 -r $trimmed2 -j $params.threads \\
         -o $params.dir/3.Pear/${pair_id} > $params.dir/3.Pear/${pair_id}.log
     """
 }
 
 process Writing_fastqManifest{
+    input:
+    stdin
 
+    output:
+    path $params.dir/4.Importing/manifest_33.txt
+    
     """
     #!/home/sb14489/miniconda3/envs/Spatial/bin/python
-
-
+    import os
+    outfile = open($params.dir/4.Importing/manifest_33.txt,"w")
+    outfile.write("# single-end PHRED 33 fastq manifest file for forward reads\n")
+    outfile.write("sample-id,absolute-filepath,direction\n")
+    for sFiles in glob.glob("$params.mergedFiles"):
+        FileName = os.path.split(sFiles)[1].replace(".assembled.fastq","")
+        outfile.write(FileName+","+sFiles+",forward\n")
+    outfile.close()
     """
 }
