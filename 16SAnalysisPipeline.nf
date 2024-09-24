@@ -2,7 +2,7 @@ params.dir = "/scratch/sb14489/10.Metagenome/"
 params.reads1 = "Leaf0.5_Re1_1.fastq.gz"
 params.reads2 = "Leaf0.5_Re1_2.fastq.gz"
 params.threads = 4
-params.skipFastQC = false  // Set this to true if you want to skip FastQC
+params.skipFastQC = false  
 
 workflow {
     Channel
