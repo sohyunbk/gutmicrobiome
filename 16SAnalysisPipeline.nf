@@ -7,8 +7,11 @@ workflow {
 
 process FastQC {
     input:
-    path reads1 = file(params.reads1)
-    path reads2 = file(params.reads2)
+    path reads1
+    path reads2
+
+    output:
+    stdout
 
     script:
     def output_dir1 = reads1.parent
