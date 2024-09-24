@@ -4,7 +4,7 @@ params.reads2 = "Leaf0.5_Re1_2.fastq.gz"
 params.threads = 4
 
 workflow {
-    FastQC | Trimmomatic | view
+    FastQC |  view
 }
 
 process FastQC {
@@ -38,4 +38,12 @@ process Trimmomatic {
         ILLUMINACLIP:/path/to/adapters.fa:2:30:10 \\
         LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     """
+}
+
+process MergeReads {
+	input:
+    stdin
+
+    output:
+    stdout
 }
