@@ -99,6 +99,7 @@ process Writing_fastqManifest {
     for sFile in ${assembled_files}; do
         # Extract the base name and strip the '.assembled.fastq' extension
         FileName="${sFile%%_*}"
+
         # Write to the manifest file
         echo "\$FileName,\$sFile,forward" >> "manifest_33.txt"
     done
