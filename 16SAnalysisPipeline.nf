@@ -11,8 +11,8 @@ process FastQC{
 
 	script:
 	"""
-	fastqc $params.reads1 -o $"reads1.parent"
-	fastqc $params.reads2 -o $"reads2.parent"
+	fastqc $params.reads1 -o $params.reads1.parent
+	fastqc $params.reads2 -o $params.reads2.parent
 	"""
 }
 
