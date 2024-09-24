@@ -109,11 +109,11 @@ process OTU_ASV_QZAFile{
     script:
     """
     qiime dada2 denoise-single --p-n-threads 28 \\
-     --i-demultiplexed-seqs $params.dir/4.Importing/"$params.commName"_demultiplexed.qza  \\
+     --i-demultiplexed-seqs ${params.dir}/4.Importing/${params.commName}_demultiplexed.qza  \\
      --p-trunc-len 0  --p-trim-left 0 --o-representative-sequences \\
-     $params.dir/4.Importing/"$params.commName"_rep_seqs.qza --o-table \\
-     $params.dir/4.Importing/"$params.commName"_table.qza  \\
-     --o-denoising-stats $params.dir/4.Importing/"$params.commName"_stats-dada2.qza
+     ${params.dir}/4.Importing/${params.commName}_rep_seqs.qza --o-table \\
+     ${params.dir}/4.Importing/${params.commName}_table.qza  \\
+     --o-denoising-stats ${params.dir}/4.Importing/${params.commName}_stats-dada2.qza
     """
 
 }
