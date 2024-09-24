@@ -10,8 +10,8 @@ process FastQC {
     stdout
 
     script:
-    def output_dir1 = "$params.reads1".parent
-    def output_dir2 = "$params.reads2".parent
+    def output_dir1 = file(params.reads1).parent
+    def output_dir2 = file(params.reads2).parent
 
     """
     fastqc $params.reads1 -o $output_dir1
