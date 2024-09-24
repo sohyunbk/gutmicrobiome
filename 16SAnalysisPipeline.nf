@@ -19,7 +19,6 @@ process FastQC {
     tuple val(reads1), val(reads2)
 
     script:
-	echo $reads1
     """
     fastqc --threads $params.threads $reads1 -o $params.dir/1.RawData/
     fastqc --threads $params.threads $reads2 -o $params.dir/1.RawData/
@@ -37,6 +36,7 @@ process Trimmomatic {
     def re1Name = params.reads1.replace(".fastq.gz", "")
     def re2Name = params.reads2.replace(".fastq.gz", "")
     """
+	echo "The value of reads1 is: $reads1"
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
