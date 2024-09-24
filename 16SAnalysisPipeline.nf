@@ -19,6 +19,9 @@ process FastQC {
 }
 
 process Trimmomatic {
+	input:
+    stdin
+	
     output:
     stdout
 
