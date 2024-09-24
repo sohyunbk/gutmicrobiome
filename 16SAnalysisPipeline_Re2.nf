@@ -109,9 +109,9 @@ process Making_MultiflexedQZAFile{
 
     script:
     """
-    qiime tools import --type 'SampleData[SequencesWithQuality]' \
-    --input-path "${params.commName}_manifest_33.txt" \
-     --output-path "${params.commName}_demultiplexed.qza" \
+    qiime tools import --type 'SampleData[SequencesWithQuality]' \\
+    --input-path ${params.commName}_manifest_33.txt \\
+     --output-path ${params.commName}_demultiplexed.qza \\
       --input-format SingleEndFastqManifestPhred33
     """
 
