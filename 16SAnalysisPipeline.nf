@@ -52,10 +52,8 @@ process MergeReads {
 	"""
 	mkdir -p $params.dir/3.Pear/
 	pear -f $params.dir/2.Trimmomatic/${re1Name}_trimmed_paired.fq.gz \\
-	 -r $params.dir/2.Trimmomatic/${re2Name}_trimmed_paired.fq.gz \\
+	  -r $params.dir/2.Trimmomatic/${re2Name}_trimmed_paired.fq.gz \\
 	  -j $params.threads \\
 	  -o $params.dir/3.Pear/${samplename} > $params.dir/3.Pear/${samplename}.log
- 
 	"""
-
 }
