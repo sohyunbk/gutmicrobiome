@@ -42,8 +42,7 @@ process Trimmomatic {
         $reads1 $reads2 \\
         $params.dir/2.Trimmomatic/${re1Name}_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${re1Name}_trimmed_unpaired.fq.gz \\
         $params.dir/2.Trimmomatic/${re2Name}_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${re2Name}_trimmed_unpaired.fq.gz \\
-        ILLUMINACLIP:/path/to/adapters.fa:2:30:10 \\
-        LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+          LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     """
 }
 
