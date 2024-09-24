@@ -94,17 +94,17 @@ process Writing_fastqManifest {
         FileName="\${FileName%%_*}"
 
         # Write to the manifest file
-        echo "\$FileName,\$sFile,forward" >> "${params.commName}_manifest_33.txt"
+        echo "\$FileName,\$params.dir/3.Pear/\$sFile,forward" >> "${params.commName}_manifest_33.txt"
     done
     """
 }
 
 process Making_MultiflexedQZAFile{
     input:
-    path "${params.commName}_manifest_33.txt"
+    path ${params.commName}_manifest_33.txt
 
     output:
-    path "${params.commName}_demultiplexed.qza"
+    path ${params.commName}_demultiplexed.qza
     publishDir "$params.dir/4.Importing/", mode: 'copy'
 
     script:
@@ -112,7 +112,7 @@ process Making_MultiflexedQZAFile{
     qiime tools import --type 'SampleData[SequencesWithQuality]' \\
     --input-path ${params.commName}_manifest_33.txt \\
      --output-path ${params.commName}_demultiplexed.qza \\
-      --input-format SingleEndFastqManifestPhred33
+     --input-format SingleEndFastqManifestPhred33
     """
 
 }
