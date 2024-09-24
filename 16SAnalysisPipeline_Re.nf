@@ -25,7 +25,6 @@ process FastQC {
     fastqc --threads $params.threads ${reads[1]} -o $params.dir/1.RawData/
     """
 }
-
 process Trimmomatic {
     tag "$pair_id"
 
@@ -33,7 +32,7 @@ process Trimmomatic {
     tuple val(pair_id), path(reads)
 
     output:
-    tuple val(pair_id), path("${pair_id}_1_trimmed_paired.fq.gz"), path("${pair_id}_2_trimmed_paired.fq.gz")
+    tuple val(pair_id), path(trimmed1), path(trimmed2)  // Return both output files as a tuple
 
     script:
     """
@@ -43,7 +42,7 @@ process Trimmomatic {
         $params.dir/1.RawData/${reads[0]} $params.dir/1.RawData/${reads[1]} \\
         $params.dir/2.Trimmomatic/${pair_id}_1_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${pair_id}_1_trimmed_unpaired.fq.gz \\
         $params.dir/2.Trimmomatic/${pair_id}_2_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${pair_id}_2_trimmed_unpaired.fq.gz \\
-          LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+        LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     """
 }
 
