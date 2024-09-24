@@ -13,8 +13,8 @@ workflow {
 
     // Qiime2
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
-    Writing_fastqManifest(all_files_ch)
-
+    manifestfile = Writing_fastqManifest(all_files_ch)
+    table.qza = OTU_ASV_QZAFile(manifestfile)
 
 }
 
