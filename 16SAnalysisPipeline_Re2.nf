@@ -14,7 +14,7 @@ workflow {
     // Qiime2
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
     manifestfile = Writing_fastqManifest(all_files_ch)
-    //tableQZA = Making_MultiflexedQZAFile(manifestfile)
+    tableQZA = Making_MultiflexedQZAFile(manifestfile)
 
 }
 
