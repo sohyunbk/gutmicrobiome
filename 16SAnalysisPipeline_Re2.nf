@@ -72,21 +72,30 @@ process MergeReads {
     """
 }
 
-process Writing_fastqManifest{
+process Writing_fastqManifest {
     input:
     path assembled_files
 
     output:
-    path "manifest_33.txt" 
-    publishDir "$params.dir/4.Importing/", mode: 'copy'  
-    
+    path "manifest_33.txt"
+    publishDir "$params.dir/4.Importing/", mode: 'copy'
+
     script:
     """
-    echo $assembled_files
+    # Print each file in the assembled_files
+    echo "Files in assembled_files:"
+    for sFile in ${assembled_files}; do
+        echo "\$sFile"
+    done
+    
+    # Create the output directory
     mkdir -p $params.dir/4.Importing/
+    
+    # Write the header to the manifest file
     echo "# single-end PHRED 33 fastq manifest file for forward reads" > "manifest_33.txt"
     echo "sample-id,absolute-filepath,direction" >> "manifest_33.txt"
     
+    # Loop through each file in assembled_files and write to the manifest
     for sFile in ${assembled_files}; do
         # Extract the base name and strip the '.assembled.fastq' extension
         FileName=\$(basename "\$sFile")
