@@ -7,8 +7,6 @@ params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
 params.qc=true
 params.featuretable=false
 
-parm 
-
 workflow {
 
     if (params.qc) {
