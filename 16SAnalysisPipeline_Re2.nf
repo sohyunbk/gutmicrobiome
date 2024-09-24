@@ -101,17 +101,17 @@ process Writing_fastqManifest {
 
 process Making_MultiflexedQZAFile{
     input:
-    path ${params.commName}_manifest_33.txt
+    path "${params.commName}_manifest_33.txt"
 
     output:
-    path ${params.commName}_demultiplexed.qza
+    path "${params.commName}_demultiplexed.qza"
     publishDir "$params.dir/4.Importing/", mode: 'copy'
 
     script:
     """
     qiime tools import --type 'SampleData[SequencesWithQuality]' \\
-    --input-path ${params.commName}_manifest_33.txt \\
-     --output-path ${params.commName}_demultiplexed.qza \\
+    --input-path "${params.commName}_manifest_33.txt" \\
+     --output-path "${params.commName}_demultiplexed.qza" \\
      --input-format SingleEndFastqManifestPhred33
     """
 
