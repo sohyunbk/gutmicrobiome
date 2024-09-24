@@ -94,7 +94,7 @@ process Writing_fastqManifest {
         FileName="\${FileName%%_*}"
 
         # Write to the manifest file
-        echo "${FileName},${params.dir}/3.Pear/${sFile},forward" >> "${params.commName}_manifest_33.txt"
+        #echo "${FileName},${params.dir}/3.Pear/${sFile},forward" >> "${params.commName}_manifest_33.txt"
     done
     """
 }
