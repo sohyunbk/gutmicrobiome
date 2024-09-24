@@ -32,7 +32,7 @@ process Trimmomatic {
     tuple val(pair_id), path(reads)
 
     output:
-    tuple val(pair_id), path(trimmed1), path(trimmed2)  // Return both output files as a tuple
+    tuple val(pair_id), path("$params.dir/2.Trimmomatic/${pair_id}_1_trimmed_paired.fq.gz"), path("$params.dir/2.Trimmomatic/${pair_id}_2_trimmed_paired.fq.gz")
 
     script:
     """
