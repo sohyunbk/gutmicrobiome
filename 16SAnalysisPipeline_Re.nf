@@ -3,7 +3,10 @@ params.reads = "/scratch/sb14489/10.Metagenome/1.RawData/Leaf0.5_Re1_{1,2}.fastq
 params.threads = 4
 
 workflow {
-    read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
+    Channel
+        .fromPath(params.samples)
+        .splitPairs(by: 2) { file1, file2 -> file1.name[0..-9] } 
+        .into { reads_ch } //read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
     FastQC(read_pairs_ch) 
     trimmed_reads_ch = Trimmomatic(read_pairs_ch) 
     MergeReads(trimmed_reads_ch)
@@ -34,7 +37,7 @@ process Trimmomatic {
     output:
     tuple val(pair_id), path("${pair_id}_1_trimmed_paired.fq.gz"), path("${pair_id}_2_trimmed_paired.fq.gz")
 
-    publishDir "$params.dir/2.Trimmomatic/", mode: 'copy'  // Move the outputs to the desired directory
+    publishDir "$params.dir/2.Trimmomatic/", mode: 'copy'  
 
     script:
     """
@@ -62,4 +65,8 @@ process MergeReads {
     pear -f $trimmed1 -r $trimmed2 -j $params.threads \\
         -o $params.dir/3.Pear/${pair_id} > $params.dir/3.Pear/${pair_id}.log
     """
+}
+
+process PreparingManifest{
+    input:
 }
