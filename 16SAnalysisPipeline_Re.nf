@@ -37,11 +37,10 @@ process Trimmomatic {
 
     script:
     """
-    echo ${reads[0]}
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
         -threads $params.threads \\
-        ${reads[0]} ${reads[1]} \\
+        $params.dir/1.RawData/${reads[0]} $params.dir/1.RawData/${reads[1]} \\
         $params.dir/2.Trimmomatic/${pair_id}_1_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${pair_id}_1_trimmed_unpaired.fq.gz \\
         $params.dir/2.Trimmomatic/${pair_id}_2_trimmed_paired.fq.gz $params.dir/2.Trimmomatic/${pair_id}_2_trimmed_unpaired.fq.gz \\
           LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
