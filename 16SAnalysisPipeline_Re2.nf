@@ -77,7 +77,7 @@ process Writing_fastqManifest {
     path assembled_files
 
     output:
-    path "manifest_33.txt"
+    path "${params.commName}_manifest_33.txt"
     
     publishDir "$params.dir/4.Importing/", mode: 'copy'
 
