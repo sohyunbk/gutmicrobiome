@@ -78,13 +78,13 @@ process Writing_fastqManifest{
     path assembled_files
 
     output:
-    path $params.dir/4.Importing/manifest_33.txt
+    path("${params.dir}/4.Importing/manifest_33.txt")
     
     """
     #!/home/sb14489/miniconda3/envs/Spatial/bin/python
     import os
     import glob
-    outfile = open($params.dir/4.Importing/manifest_33.txt,"w")
+    outfile = open("${params.dir}/4.Importing/manifest_33.txt","w")
     outfile.write("# single-end PHRED 33 fastq manifest file for forward reads\n")
     outfile.write("sample-id,absolute-filepath,direction\n")
     for sFiles in glob.glob("$assembled_files"):
