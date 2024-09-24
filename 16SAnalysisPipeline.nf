@@ -4,7 +4,7 @@ params.reads2 = "Leaf0.5_Re1_2.fastq.gz"
 params.threads = 4
 
 workflow {
-    FastQC |  view
+    Trimmomatic | view
 }
 
 process FastQC {
@@ -46,4 +46,16 @@ process MergeReads {
 
     output:
     stdout
+
+	script:
+	def samplename = params.reads1.replace("_1.fastq.gz", "")
+	"""
+	mkdir -p $params.dir/3.Pear/
+	pear -f $params.dir/2.Trimmomatic/${re1Name}_trimmed_paired.fq.gz \\
+	 -r $params.dir/2.Trimmomatic/${re2Name}_trimmed_paired.fq.gz \\
+	  -j $params.threads \\
+	  -o $params.dir/3.Pear/${samplename} > $params.dir/3.Pear/${samplename}.log
+ 
+	"""
+
 }
