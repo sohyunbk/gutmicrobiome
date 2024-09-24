@@ -14,8 +14,6 @@ process FastQC {
     script:
     """
 	echo ** FASTAQC **
-	echo fastqc $params.dir/1.RawData/$params.reads1 -o $params.dir/1.RawData/ 
-	echo fastqc $params.dir/1.RawData/$params.reads2 -o $params.dir/1.RawData/
     fastqc --threads $params.threads  $params.dir/1.RawData/$params.reads1 -o $params.dir/1.RawData/ 
     fastqc --threads $params.threads  $params.dir/1.RawData/$params.reads2 -o $params.dir/1.RawData/
     """
