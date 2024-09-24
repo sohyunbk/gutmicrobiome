@@ -6,13 +6,15 @@ params.threads = 4
 workflow {
     read_pairs_ch = channel.fromFilePairs( params.reads, checkIfExists: true )
     FastQC(read_pairs_ch) 
+    Trimmomatic(read_pairs_ch) 
 
     }
 
 process FastQC {
+    tag "$pair_id"
+
     input:
     tuple val(pair_id), path(reads)
-
 
     output:
     stdout
@@ -25,13 +27,16 @@ process FastQC {
 }
 
 process Trimmomatic {
+    tag "$pair_id"
+
     input:
-    stdin
+    tuple val(pair_id), path(reads)
 
     output:
     stdout
 
     script:
+    echo "$pair_id"
     """
     mkdir -p $params.dir/2.Trimmomatic/
     java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE \\
