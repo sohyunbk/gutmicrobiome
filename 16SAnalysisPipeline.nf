@@ -6,10 +6,6 @@ workflow {
 }
 
 process FastQC {
-    input:
-    path reads1
-    path reads2
-
     output:
     stdout
 
@@ -18,7 +14,7 @@ process FastQC {
     def output_dir2 = reads2.parent
 
     """
-    fastqc $reads1 -o $output_dir1
-    fastqc $reads2 -o $output_dir2
+    fastqc $params.reads1 -o $output_dir1
+    fastqc $params.reads2 -o $output_dir2
     """
 }
