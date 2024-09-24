@@ -6,14 +6,21 @@ workflow{
 }
 
 process FastQC{
-	output:
-	stdout
+    input:
+    path reads1 from params.reads1
+    path reads2 from params.reads2
 
-	script:
-	"""
-	fastqc $params.reads1
-	fastqc $params.reads2
-	"""
+    output:
+    path "*.html" into fastqc_results
+    path "*.zip" into fastqc_results
+
+    script:
+    """
+    fastqc $reads1
+    fastqc $reads2
+    """
+    
+    publishDir reads1.parent, mode: 'copy'
 }
 
 
