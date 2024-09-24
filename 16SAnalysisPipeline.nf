@@ -8,7 +8,7 @@ workflow {
         .fromFilePairs([params.dir + "/1.RawData/" + params.reads1, params.dir + "/1.RawData/" + params.reads2])
         .set { raw_reads }
 
-    raw_reads | FastQC | view
+    raw_reads | FastQC | Trimmomatic | view
     }
 
 process FastQC {
