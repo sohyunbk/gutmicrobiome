@@ -14,7 +14,7 @@ process FastQC {
     def output_dir2 = file(params.reads2).parent
 
     """
-	echo $output_dir1
+	echo fastqc $params.reads1 -o $output_dir1
     fastqc $params.reads1 -o $output_dir1
     fastqc $params.reads2 -o $output_dir2
     """
