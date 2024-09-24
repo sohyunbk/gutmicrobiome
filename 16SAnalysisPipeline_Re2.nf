@@ -4,18 +4,22 @@ params.threads = 4
 params.commName = "ChickenGut"
 params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
 params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
+
 workflow {
      // Upto Merging Reads
-    //read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
-    //FastQC(read_pairs_ch)
-    //trimmed_reads_ch = Trimmomatic(read_pairs_ch)
-    //MergeReads(trimmed_reads_ch)
+    read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
+    FastQC(read_pairs_ch)
+    trimmed_reads_ch = Trimmomatic(read_pairs_ch)
+    MergeReads(trimmed_reads_ch)
 
     // Qiime2
     all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
     manifestfile = Writing_fastqManifest(all_files_ch)
-    tableQZA = Making_MultiflexedQZAFile(manifestfile)
-    OTU_ASV_QZAFile(tableQZA)
+    demultiplexed_QZA = Making_MultiflexedQZAFile(manifestfile)
+    outputQZAs = Denoising_ChimeraRemov_ASV_dada2_QZAFile(demultiplexed_QZA)
+    tableQZA = outputQZAs[0]
+    repseqQZA = outputQZAs[1]
+    FeatureTable(tableQZA,repseqQZA)
 }
 
 process FastQC {
@@ -122,7 +126,7 @@ process Making_MultiflexedQZAFile{
 
 }
 
-process OTU_ASV_QZAFile{
+process Denoising_ChimeraRemov_ASV_dada2_QZAFile{
     input:
     path "${params.commName}_demultiplexed.qza"
 
@@ -130,10 +134,11 @@ process OTU_ASV_QZAFile{
     path "${params.commName}_table.qza"
     path "${params.commName}_rep_seqs.qza"
     path "${params.commName}_stats-dada2.qza"
-    publishDir "$params.dir/4.Importing/", mode: 'copy'
+    publishDir "$params.dir/5.AfterQC/", mode: 'copy'
 
     script:
     """
+    mkdir -p ${params.dir}/5.AfterQC/
     qiime dada2 denoise-single --p-n-threads 28 \\
      --i-demultiplexed-seqs "${params.commName}_demultiplexed.qza"  \\
      --p-trunc-len 0  --p-trim-left 0 --o-representative-sequences \\
@@ -142,4 +147,26 @@ process OTU_ASV_QZAFile{
      --o-denoising-stats ${params.commName}_stats-dada2.qza
     """
 
+}
+
+process FeatureTable{
+    input:
+    path "${params.commName}_table.qza"
+    path "${params.commName}_rep_seqs.qza"
+
+    output:
+    path "${params.commName}_table.qzv"
+    path "${params.commName}_metadata.tsv"
+    path "${params.commName}_rep_seqs.qzv"
+    publishDir "$params.dir/5.AfterQC/", mode: 'copy'
+
+    script:
+    """
+    qiime feature-table summarize --i-table  "${params.commName}_table.qza" \\
+     --o-visualization "${params.commName}_table.qzv" \\
+      --m-sample-metadata-file "${params.commName}_metadata.tsv"
+
+    qiime feature-table tabulate-seqs --i-data "${params.commName}_rep_seqs.qza" \\ 
+    --o-visualization "${params.commName}_rep_seqs.qzv"
+    """
 }
