@@ -4,27 +4,28 @@ params.threads = 10
 params.commName = "ChickenGut"
 params.reads = "${params.dir}/1.RawData/*_{1,2}.fastq.gz"
 params.mergedFiles = "${params.dir}/3.Pear/*.assembled.fastq"
-params.qc=true
+params.preprocessing=true
 params.featuretable=false
+params.qiimeDiversity=false
+params.figures=false
 
 workflow {
-
-    if (params.qc) {
+    if (params.preprocessing) {
         read_pairs_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
         FastQC(read_pairs_ch)
         trimmed_reads_ch = Trimmomatic(read_pairs_ch)
         MergeReads(trimmed_reads_ch)
     }
-
     if (params.featuretable){
-    all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
-    manifestfile = Writing_fastqManifest(all_files_ch)
-    demultiplexed_QZA = Making_MultiflexedQZAFile(manifestfile)
-    outputQZAs = Denoising_ChimeraRemov_ASV_dada2_QZAFile(demultiplexed_QZA)
-    tableQZA = outputQZAs[0]
-    repseqQZA = outputQZAs[1]
-    FeatureTable(tableQZA,repseqQZA)
+        all_files_ch = Channel.fromPath(params.mergedFiles, checkIfExists: true).collect()
+        manifestfile = Writing_fastqManifest(all_files_ch)
+        demultiplexed_QZA = Making_MultiflexedQZAFile(manifestfile)
+        outputQZAs = Denoising_ChimeraRemov_ASV_dada2_QZAFile(demultiplexed_QZA)
+        tableQZA = outputQZAs[0]
+        repseqQZA = outputQZAs[1]
+        filteredQZA = MakeQZVs_FilteringMissingSamples(tableQZA,repseqQZA)
     }
+
 }
 
 process FastQC {
@@ -152,14 +153,13 @@ process Denoising_ChimeraRemov_ASV_dada2_QZAFile{
 
 }
 
-process FeatureTable{
+process MakeQZVs_FilteringMissingSamples{
     input:
     path "${params.commName}_table.qza"
     path "${params.commName}_rep_seqs.qza"
 
     output:
-    path "${params.commName}_table.qzv"
-    path "${params.commName}_rep_seqs.qzv"
+    path "${params.commName}_filtered-table.qza"
     publishDir "$params.dir/5.AfterQC/", mode: 'copy'
 
     script:
@@ -177,3 +177,28 @@ process FeatureTable{
     --o-filtered-table ./4.QualityControl/filtered-table.qza
     """
 }
+
+process DifferentialAbundanceTest_EdgeR{
+    input:
+    stdin
+
+    output:
+    stdout
+
+    """
+    python "${params.ScriptDir}/DifferentialTest_EdgeR.py --input_table --output_name "
+    """
+    }
+
+
+process StatckedBarPlot{
+    input:
+    stdin
+
+    output:
+    stdout
+
+    """
+    python "${params.ScriptDir}/StatckedBarPlot_ggplot.py --input_table --output_name "
+    """
+    }
